@@ -6,13 +6,12 @@ import se.yrgo.domain.Book;
 import se.yrgo.domain.Reader;
 
 import java.util.List;
-import java.util.Set;
 
 public class LibraryTest {
 
     public static void main(String[] args) {
 
-//        setUpData();
+       setUpData();
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("databaseConfig");
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -20,21 +19,36 @@ public class LibraryTest {
         tx.begin();
 
         //Task number 2:
-        Author author = em.find(Author.class, 1);
-        Query q = em.createQuery("select author.booksFromAuthors from Author as author where author.name = 'Astrid Lindgren'");
+        Query q = em.createQuery("SELECT author.booksFromAuthors FROM Author AS author WHERE author.name = 'Astrid Lindgren'");
         List<Book> booksFromAstrid = q.getResultList();
         for (Book book : booksFromAstrid) {
             System.out.println(book);
         }
 
-        //Task number 3:
+       //Task number 3:
         Book book2 = em.find(Book.class, 2);
-        TypedQuery<Reader> query = em.createQuery("from Reader reader where : book member of book.readersOfBook",
+        TypedQuery<Reader> query = em.createQuery("FROM Reader reader WHERE :book member of reader.bookReader",
                 Reader.class);
         query.setParameter("book", book2);
         List<Reader> readerOfBook2 = query.getResultList();
         for (Reader reader : readerOfBook2)
             System.out.println(reader);
+
+        //Task number 4:
+        Query q2 = em.createQuery("SELECT DISTINCT a FROM Author a JOIN a.booksFromAuthors b " +
+                "JOIN b.readerOfBook r");
+        List<Author> authors = q2.getResultList();
+        for (Author author : authors)
+            System.out.println(author);
+
+        //Task number 5:
+        List<Object[]> results = em.createQuery(
+                "SELECT a.name, COUNT(b) from Author a JOIN a.booksFromAuthors " +
+                        "b GROUP BY a.name").getResultList();
+
+        for (Object[] result : results) {
+            System.out.println(result[0] + " has written " + result[1] + " books");
+        }
 
         tx.commit();
         em.close();
@@ -47,6 +61,7 @@ public class LibraryTest {
             EntityTransaction tx = em.getTransaction();
 
             tx.begin();
+
             //Task number 1:
             Author author1 = new Author("Astrid Lindgren", "Swedish");
             Author author2 = new Author("J.K Rowling", "British");
@@ -70,26 +85,26 @@ public class LibraryTest {
             Reader reader2 = new Reader("Kalle Karlsson", "kallekul11@msn.se");
             Reader reader3 = new Reader("Sonja Sundberg", "solenidittliv@hotmail.com");
 
-            book1.addReaderToBook(reader1);
-            book2.addReaderToBook(reader2);
-            book3.addReaderToBook(reader3);
-            book4.addReaderToBook(reader3);
-            book5.addReaderToBook(reader1);
-            book6.addReaderToBook(reader2);
+            book1.addReaderOfBook(reader1);
+            book2.addReaderOfBook(reader1);
+            book2.addReaderOfBook(reader2);
+            book3.addReaderOfBook(reader3);
+            book4.addReaderOfBook(reader3);
+            book5.addReaderOfBook(reader1);
+            book6.addReaderOfBook(reader2);
 
-
-//    em.persist(author1);
-//    em.persist(author2);
-//    em.persist(author3);
-//    em.persist(book1);
-//    em.persist(book2);
-//    em.persist(book3);
-//    em.persist(book4);
-//    em.persist(book5);
-//    em.persist(book6);
-//    em.persist(reader1);
-//    em.persist(reader2);
-//    em.persist(reader3);
+    em.persist(author1);
+    em.persist(author2);
+    em.persist(author3);
+    em.persist(book1);
+    em.persist(book2);
+    em.persist(book3);
+    em.persist(book4);
+    em.persist(book5);
+    em.persist(book6);
+    em.persist(reader1);
+    em.persist(reader2);
+    em.persist(reader3);
 
             tx.commit();
             em.close();

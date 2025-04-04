@@ -51,4 +51,13 @@ public class Author {
     public List<Book> getBooksFromAuthors() {
         return booksFromAuthors;
     }
+
+    @Override
+    public String toString() {
+        return "Author{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", nationality='" + nationality + '\'' +
+                '}';
+    }
 }

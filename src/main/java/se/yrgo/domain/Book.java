@@ -10,14 +10,14 @@ import java.util.Set;
 @Entity
 public class Book {
 @Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
+@GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Column(length = 40)
     private String title;
     @Column(length = 40)
     private int publicationYear;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "bookReader")
     private List<Reader> readerOfBook;
 
     public Book() {}
@@ -28,8 +28,9 @@ public class Book {
         this.readerOfBook = new ArrayList<Reader>();
     }
 
-    public void addReaderToBook(Reader newReader) {
+    public void addReaderOfBook(Reader newReader) {
         this.readerOfBook.add(newReader);
+        newReader.addbookReader(this);
     }
 
     public int getId() {
@@ -54,7 +55,6 @@ public class Book {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", publicationYear=" + publicationYear +
-                ", readerOfBook=" + readerOfBook +
-                '}';
+                                '}';
     }
 }
