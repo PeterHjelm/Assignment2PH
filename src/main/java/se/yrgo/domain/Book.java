@@ -15,15 +15,19 @@ public class Book {
     @Column(length = 40)
     private String title;
     @Column(length = 40)
+    private String genre;
+    @Column(length = 40)
     private int publicationYear;
+
 
     @ManyToMany(mappedBy = "bookReader")
     private List<Reader> readerOfBook;
 
     public Book() {}
 
-    public Book(String title, int publicationYear) {
+    public Book(String title, String genre, int publicationYear) {
         this.title = title;
+        this.genre = genre;
         this.publicationYear = publicationYear;
         this.readerOfBook = new ArrayList<Reader>();
     }
